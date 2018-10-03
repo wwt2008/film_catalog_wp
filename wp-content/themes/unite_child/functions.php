@@ -65,7 +65,7 @@ function add_films_taxonomies(){
         'update_item'       => __( 'Update Genre', 'textdomain' ),
         'add_new_item'      => __( 'Add New Genre', 'textdomain' ),
         'new_item_name'     => __( 'New Genre Name', 'textdomain' ),
-        'menu_name'         => __( 'Genre', 'textdomain' ),
+        'menu_name'         => __( 'Genres', 'textdomain' ),
         'separate_items_with_commas' => __('Separate genres with commas'),
     );
     $genre_args = array(
