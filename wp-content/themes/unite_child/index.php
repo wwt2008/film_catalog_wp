@@ -16,7 +16,7 @@ get_header(); ?>
 	<div id="primary" class="content-area col-sm-12 col-md-8">
 		<main id="main" class="site-main" role="main">
         <?php $args = array(
-                'posts_per_page'   => 5,
+                'posts_per_page'   => 10,
                 'offset'           => 0,
                 'orderby'          => 'date',
                 'order'            => 'DESC',
@@ -53,5 +53,5 @@ get_header(); ?>
 		</main><!-- #main -->
 	</div><!-- #primary -->
 
-<?php get_sidebar('new'); ?>
+<?php get_sidebar(); ?>
 <?php get_footer(); ?>
