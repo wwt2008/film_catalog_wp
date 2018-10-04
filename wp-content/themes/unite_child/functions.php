@@ -140,3 +140,85 @@ function add_films_taxonomies(){
     );
     register_taxonomy( 'actor',  'film', $actors_args );
 }
+
+//Add shortcode to show last 5 films
+function add_last_films_shortcode() {
+    $html = "";
+    $args = array(
+        'posts_per_page'   => 5,
+        'offset'           => 0,
+        'orderby'          => 'date',
+        'order'            => 'DESC',
+        'post_type'        => 'film',
+        'post_status'      => 'publish',
+    );
+    $last_films = new WP_Query($args);
+
+    if( $last_films->have_posts() ) : while( $last_films->have_posts() ) : $last_films->the_post();
+        $href = apply_filters('the_permalink', get_permalink());
+        $title = '<p class="last-films-title">' . get_the_title() . '</p>';
+        $image = '<p class="last-films-image">' . get_the_post_thumbnail(get_the_ID(), "thumbnail") . '</p> ';
+        $date = get_post_meta(get_the_ID(), 'release_date', true);
+        if(!empty($date)) $releaseDate = '<p class="last-films-date">' .'Release date: '.$date. '</p>';
+        else $releaseDate = '';
+        $html .= '<div class="last-films-item"><a href="' . $href. '" class="button">'.$title . $image. $releaseDate.'</a></div>';
+        endwhile;
+        $html ='<aside id="last-films">'.$html.'</aside>';
+    endif;
+
+    return $html;
+}
+add_shortcode('last-films', 'add_last_films_shortcode');
+
+//Add extra info after description
+function get_extra_info($postId){
+    if ('film' != get_post_type()) return "";
+    if (is_search()) return "";
+    $separator = ", ";
+
+    //get and prepare Country and Genre
+    $taxonomy_terms = wp_get_post_terms($postId, ['country', 'genre']);
+    $countries = array_filter($taxonomy_terms, function ($term) { return $term->taxonomy === 'country'; });
+    $genres = array_filter($taxonomy_terms, function ($term) { return $term->taxonomy === 'genre'; });
+
+    $countries = array_slice($countries, 0, 5);
+    $genres = array_slice($genres, 0, 5);
+
+    $countries = array_map(function ($country) { return "<a href='/country/{$country->slug}'>{$country->name}</a>"; }, $countries);
+    $genres = array_map(function ($genre) { return "<a href='/genre/{$genre->slug}'>{$genre->name}</a>"; }, $genres);
+
+    $countries_genresArr = [];
+    if (count($countries)) $countries_genresArr[] = "Country: " . join($separator, $countries);
+    if (count($genres)) $countries_genresArr[] = "Genre: " . join($separator, $genres);
+
+    if(count($countries_genresArr)) $countries_genresText = '<br />'.join($separator, $countries_genresArr);
+    else $countries_genresText = '';
+
+    //get Price ticket and Release date
+    $price_dateArr =[];
+    $price = get_post_meta($postId, 'ticket_price', true);
+    if(!empty($price)) $price_dateArr['price'] = 'Ticket price: '.$price;
+
+    $releaseDate = get_post_meta($postId, 'release_date', true);
+    if(!empty($releaseDate)) $price_dateArr['releaseDate'] = 'Release date: '.$releaseDate;
+
+    if(count($price_dateArr)) $price_dateText = '<br />'.join($separator, $price_dateArr);
+    else $price_dateText = '';
+
+    return $price_dateText.$countries_genresText;
+}
+add_filter('the_content', 'film_extra_info');
+function film_extra_info($content) {
+    $extra_info = get_extra_info(get_the_ID());
+    if (is_front_page()) {
+        return $content . $extra_info;
+    } else {
+        return $content;
+    }
+}
+
+//Unregister existing in main template sidebar
+function unregister_templates_sidebar() {
+    unregister_sidebar('sidebar-1');
+}
+add_action( 'widgets_init', 'unregister_templates_sidebar',11 );

@@ -22,20 +22,11 @@
 
 	<div class="entry-content">
 		<?php the_content(); ?>
-        <?php the_terms( get_the_id(), 'country', __( "Countries: " ), "," ); ; ?>
-        <?php the_terms( get_the_id(), 'genre', __( "Genres: " ), ", " ); ; ?>
 
-        <?php
-        $taxonomies =[];
-        $price = get_post_meta($post->ID, 'ticket_price', true);
-        if(!empty($price)) $taxonomies['price'] = 'Ticket price: '.$price;
-
-        $releaseDate = get_post_meta($post->ID, 'release_date', true);
-        if(!empty($releaseDate)) $taxonomies['releaseDate'] = 'Release date: '.$releaseDate;
-
-        $taxonomiesText = implode(', ', $taxonomies);
-        if(!empty($releaseDate)) echo '<br />'.$taxonomiesText;
+        <?php //Add extra info after descriprion
+            echo get_extra_info(get_the_ID());
         ?>
+
 		<?php
 			wp_link_pages( array(
 				'before' => '<div class="page-links">' . __( 'Pages:', 'unite' ),

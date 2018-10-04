@@ -7,3 +7,6 @@ Template:       unite
 Version:        0.1.0
 */
 @import url("../unite/style.css");
+.last-films-title{
+    font-weight:bold;
+}

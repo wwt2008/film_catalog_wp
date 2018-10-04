@@ -37,7 +37,6 @@ get_header(); ?>
 					 * If you want to override this in a child theme, then include a file
 					 * called content-___.php (where ___ is the Post Format name) and that will be used instead.
 					 */
-					echo 'post format: '. get_post_format();
 					get_template_part( 'content', get_post_format() );
 				?>
 
@@ -54,5 +53,5 @@ get_header(); ?>
 		</main><!-- #main -->
 	</div><!-- #primary -->
 
-<?php get_sidebar(); ?>
+<?php get_sidebar('new'); ?>
 <?php get_footer(); ?>
